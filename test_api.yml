@@ -1,0 +1,48 @@
+
+# Author: Abhay Bhargav
+# Application: TESTAPP
+# API Version: v1
+# all requests and tests come here
+# TODO: Create Template JSON Objects with either
+# TODO: Create VarKeys that go into JSON requests, URI
+- request:
+    name: "Initial OAuth Request"
+    uri: https://api.example.com/oauth/token
+    params: null
+    method: POST
+    headers:
+      - {"name": "Machine-Token", "value": "randomval", "type": "static"}
+      - {"name": "Authorization", "value": "Basic randomval==", "type": "static"}
+    exclude_headers:
+      - User-Agent
+      - Connection
+    body:
+      type: post-vars
+      value: {"grant_type": "client_credentials"}
+    response:
+      status: 200
+      content_type: application/json
+      json: {"issued_at":"1477391994416","scope":"readwrite read","user_company_id":"randomval","expires_in":"5100","user_email":"random@random.com","organization_id":"0","token_type":"BearerToken","client_id":"randomval","access_token":"randomval","organization_name":"test","application_id":"random"}
+      validate: all
+      #we might need to add an assert value here for certain values
+      var_key:
+        - {"name": "client_id", "prefix": null, "suffix": null}
+        - {"name": "access_token", "prefix": "Bearer ", "suffix": null}
+
+- request:
+    name: "Get quota of example Service"
+    uri: https://api.example.com/ssss/quota.svc/
+    params: null
+    method: GET
+    headers:
+      - {"name": "Authorization", "type":"var_key", "varname": "access_token"}
+      - {"name": "AppKey", "type":"var_key", "varname": "client_id"}
+      - {"name": "Content-Type", "value": "application/json", "type": "static"}
+    exclude_headers:
+      - User-Agent
+      - Connection
+    response:
+      status: 200
+      content_type: application/json
+      json: {"ActiveBytes":0,"AvailableBytes":1040845609,"StorageEndpointId":"000000000","PreviousVersionBytes":0,"DeletedBytes":32896215,"UserId":"00000000-0000-0000-0000-000000000000","StorageCapacityInBytes":0}
+      validate: all
